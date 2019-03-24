@@ -37,22 +37,22 @@ clf = svm.SVC(gamma=0.1, kernel='poly')
 clf.fit(X1, Y1)
 endTime = int(round(time.time()) * 1000)
 
-#for pixels in testImage:
-#	image = []
-#	for i in range(0, 28):
-#		image.append(pixels[i * 28 : (i + 1) * 28])
-#	numpy.multiply(image, 255)	
-#	fd = hog(image, orientations=12, pixels_per_cell=(2, 2), 
-#					cells_per_block=(1, 1), visualize=False)
-#	X2.append(fd)
+##for pixels in testImage:
+##	image = []
+##	for i in range(0, 28):
+##		image.append(pixels[i * 28 : (i + 1) * 28])
+##	numpy.multiply(image, 255)	
+##	fd = hog(image, orientations=12, pixels_per_cell=(2, 2), 
+##					cells_per_block=(1, 1), visualize=False)
+##	X2.append(fd)
 
-#result = clf.predict(X2)
-
-#errorCount = 0
-#for i in range(0, len(result)):
-#	if result[i] != Y2[i]:
-#		errorCount += 1
-#print('errorCount = ' + str(errorCount))
+##result = clf.predict(X2)
+##
+##errorCount = 0
+##for i in range(0, len(result)):
+##	if result[i] != Y2[i]:
+##		errorCount += 1
+##print('errorCount = ' + str(errorCount))
 print('time elapse = ' + str(endTime - startTime))
 
 
