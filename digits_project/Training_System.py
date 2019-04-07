@@ -6,6 +6,7 @@ import numpy as np
 from sklearn.neural_network import MLPClassifier
 from sklearn import preprocessing
 from matplotlib import pyplot as plt
+import pickle
 
 def Image(images, labels):
 
@@ -19,6 +20,7 @@ def Image(images, labels):
 
     # Threshold the image
     ret, im_th = cv2.threshold(im_gray, 200, 255, cv2.THRESH_BINARY_INV)
+    roi = cv2.morphologyEx(im_th, cv2.MORPH_OPEN, np.ones((6,6), np.uint8))
     plt.imshow(im_th,'gray')
     plt.show()
 
@@ -36,17 +38,17 @@ def Image(images, labels):
                       (rect[0] + rect[2], rect[1] + rect[3]), (0, 255, 0), 3)
         
         # Make the rectangular region around the digit
-        leng = int(rect[3] * 1.4)
+        leng = int(rect[3] * 1.6)
         pt1 = int(rect[1] + rect[3] // 2 - leng // 2)
         pt2 = int(rect[0] + rect[2] // 2 - leng // 2)
         roi = im_th[pt1:pt1+leng, pt2:pt2+leng]
-        kernel = np.ones((leng//37, leng//37),np.uint8)
+        kernel = np.ones((int(leng*0.015), int(leng*0.015)), np.uint8)
         
         # Resize the image
         roi = cv2.resize(roi, (28, 28), interpolation=cv2.INTER_AREA)
-        roi = cv2.dilate(roi, kernel,iterations = 2)
-        #roi = cv2.morphologyEx(roi, cv2.MORPH_OPEN, kernel)
-        roi = cv2.morphologyEx(roi, cv2.MORPH_CLOSE, kernel)
+        roi = cv2.dilate(roi, kernel,iterations = 1)
+        roi = cv2.morphologyEx(roi, cv2.MORPH_OPEN, kernel)
+        #roi = cv2.morphologyEx(roi, cv2.MORPH_CLOSE, kernel)
         plt.imshow(roi,'gray')
         plt.show()
         x= np.int32(input("num : "))
@@ -74,6 +76,7 @@ def Predict(model, pp):
 
     # Threshold the image
     ret, im_th = cv2.threshold(im_gray, 200, 255, cv2.THRESH_BINARY_INV)
+    roi = cv2.morphologyEx(im_th, cv2.MORPH_OPEN, np.ones((6,6), np.uint8))
     plt.imshow(im_th,'gray')
     plt.show()
 
@@ -89,17 +92,17 @@ def Predict(model, pp):
         cv2.rectangle(im, (rect[0], rect[1]),
                       (rect[0] + rect[2], rect[1] + rect[3]), (0, 255, 0), 3) 
         # Make the rectangular region around the digit
-        leng = int(rect[3] * 1.4)
+        leng = int(rect[3] * 1.6)
         pt1 = int(rect[1] + rect[3] // 2 - leng // 2)
         pt2 = int(rect[0] + rect[2] // 2 - leng // 2)
         roi = im_th[pt1:pt1+leng, pt2:pt2+leng]
-        kernel = np.ones((leng//37, leng//37),np.uint8)
+        kernel = np.ones((int(leng*0.015), int(leng*0.015)), np.uint8)
         
         # Resize the image
         roi = cv2.resize(roi, (28, 28), interpolation=cv2.INTER_AREA)
         roi = cv2.dilate(roi, kernel,iterations = 2)
-        #roi = cv2.morphologyEx(roi, cv2.MORPH_OPEN, kernel)
-        roi = cv2.morphologyEx(roi, cv2.MORPH_CLOSE, kernel)
+        roi = cv2.morphologyEx(roi, cv2.MORPH_OPEN, kernel)
+        #roi = cv2.morphologyEx(roi, cv2.MORPH_CLOSE, kernel)
         plt.imshow(roi,'gray')
         plt.show()
         
@@ -124,6 +127,11 @@ def Predict(model, pp):
 def train(model, images, labels):
     model.partial_fit(images, labels)
     return model
+
+##def save(model):
+##    pkl_filename = "pickle_model.pkl"  
+##    with open(pkl_filename, 'wb') as file:  
+##        pickle.dump(model, file)
 #-------------------------------------------------------------------------------
 ##images = []
 ##labels = []
@@ -133,5 +141,7 @@ def train(model, images, labels):
 ##        break
 ##    images, labels = Image(images, labels)
 ##model,pp = joblib.load("digits_cls1.pkl")
-####model = train(model, images, labels)
+##model = train(model, images, labels)
+##save(model)
+##joblib.dump((model, pp), "digits_cls1.pkl", compress=3)
 ##Predict(model, pp)
